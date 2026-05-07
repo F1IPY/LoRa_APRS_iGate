@@ -16,4 +16,4 @@ ____________________________________________________
 
 __________________________________________
 
-# Hope i' works for you, 73! F1IPY, Paris, France
+# Hope it works for you, 73! F1IPY, Paris, France
