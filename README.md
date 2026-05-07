@@ -11,7 +11,7 @@ ____________________________________________________
 
 
 # Timeline (Versions):
-- 2026-05-07 Add TCPIP port for Transparent Kiss mode (RNS port 8002)
+- 2026-05-07 Add TCPIP port for Transparent Kiss mode (port 8002)
 - 2026-03-25 Add feature in Web UI to activate or deactivate LED
 
 __________________________________________
