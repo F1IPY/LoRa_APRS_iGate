@@ -1,4 +1,4 @@
-# Fork of CA2RXU LoRa APRS iGate/Digipeater
+# Fork of CA2RXU LoRa APRS iGate/Digipeater ( <a href="https://github.com/richonguzman/LoRa_APRS_iGate" target="_blank">LoRa_APRS_iGate Firmware</a>)
 
 This firmware is for using ESP32 based boards with LoRa Modules and GPS to live in the APRS world.
 
@@ -16,4 +16,4 @@ ____________________________________________________
 
 __________________________________________
 
-# Hope You Enjoy this, 73! CA2RXU, Valparaiso, Chile
+# Hope i' works for you, 73! F1IPY, Paris, France
