@@ -1,0 +1,124 @@
+{
+    "callsign": "F1IPY-11",
+    "wifi": {
+        "autoAP": {
+            "password": "1234567890",
+            "timeout": 10
+        },
+        "AP": [{"ssid":"Chrisperry","password":"gwendoline1988"}]
+    },
+    "beacon": {
+        "latitude": 48.80283,
+        "longitude": 2.0215,
+        "comment": "LoRa APRS",
+        "interval": 15,
+        "overlay": "L",
+        "symbol": "a",
+        "path": "WIDE1-1",
+        "sendViaAPRSIS": false,
+        "sendViaRF": false,
+        "beaconFreq": 1,
+        "statusActive": false,
+        "statusPacket": "",
+        "gpsActive": false,
+        "ambiguityLevel": 0
+    },
+    "aprs_is": {
+        "active": false,
+        "messagesToRF": false,
+        "objectsToRF": false,
+        "server": "rotate.aprs2.net",
+        "passcode": "9603",        
+        "port": 14580,
+        "filter": "m/10"        
+    },
+    "personalNote": "",
+    "blacklist": "",
+    "digi": {
+        "mode": 0,
+        "ecoMode": 0,
+        "backupDigiMode": false
+    },
+    "lora": {
+        "rxActive": true,
+        "rxFreq": 433775000,
+        "rxSpreadingFactor": 12,
+        "rxCodingRate4": 5,
+        "rxSignalBandwidth": 125000,
+        "txActive": true,
+        "txFreq": 433775000,
+        "txSpreadingFactor": 12,
+        "txCodingRate4": 5,
+        "txSignalBandwidth": 125000,
+        "power": 20
+    },
+    "display": {
+        "alwaysOn": true,
+        "timeout": 1,
+        "turn180": false
+    },
+    "battery": {
+        "sendInternalVoltage": false,
+        "monitorInternalVoltage": false,
+        "internalSleepVoltage": 2.9,
+        "sendExternalVoltage": false,
+        "monitorExternalVoltage": false,
+        "externalSleepVoltage": 10.9,
+        "useExternalI2CSensor": false,
+        "voltageDividerR1": 100.0,
+        "voltageDividerR2": 27.0,
+        "externalVoltagePin": 34,
+        "sendVoltageAsTelemetry": false
+	},
+    "wxsensor": {
+        "active": false,
+        "heightCorrection": 0,
+        "temperatureCorrection": 0.0
+	},
+    "syslog": {
+        "active": false,
+        "server": "lora.link9.net",
+        "port": 1514,
+        "logBeaconOverTCPIP": false
+    },
+    "tnc": {
+        "enableServer": false,
+        "enableSerial": false,
+        "acceptOwn": false,
+        "aprsBridgeActive": false,
+        "rnsActive": true,
+        "rnsPort": 8002,
+        "rnsDebug": true
+    },
+    "mqtt": {
+        "active": false,
+        "server": "",
+        "topic": "",
+        "username": "",
+        "password": "",
+        "port": 1883,
+        "beaconOverMqtt": false
+    },
+    "ota": {
+        "username": "",
+        "password": ""
+    },
+    "webadmin": {
+        "username": "admin",
+        "password": ""
+    },
+    "remoteManagement": {
+        "managers": "",
+        "rfOnly": true
+    },
+    "ntp": {
+        "server": "pool.ntp.org",
+        "gmtCorrection": 0.0
+    },
+    "other": {
+        "rememberStationTime": 30,
+        "rebootMode": false,
+        "rebootModeTime": 6,
+        "startupDelay": 0
+    }
+}

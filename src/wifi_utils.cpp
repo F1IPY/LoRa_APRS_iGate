@@ -1,0 +1,135 @@
+/* Copyright (C) 2025 Ricardo Guzman - CA2RXU
+ *
+ * This file is part of LoRa APRS iGate.
+ *
+ * LoRa APRS iGate is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * LoRa APRS iGate is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LoRa APRS iGate. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include <WiFi.h>
+#include "configuration.h"
+#include "network_manager.h"
+#include "board_pinout.h"
+#include "wifi_utils.h"
+#include "display.h"
+#include "utils.h"
+
+
+extern Configuration    Config;
+extern NetworkManager   *networkManager;
+
+extern bool             backupDigiMode;
+extern uint32_t         lastServerCheck;
+
+uint8_t     wifiCounter         = 0;
+uint32_t    lastBackupDigiTime  = millis();
+uint32_t    lastWiFiCheck       = 0;
+
+
+namespace WIFI_Utils {
+
+    void checkWiFi() {
+        if (Config.digi.ecoMode != 0) return;
+
+        if (!networkManager->hasWiFiNetworks()) {
+            return;
+        }
+
+        uint32_t currentTime = millis();
+
+        if (backupDigiMode) {
+            if (!networkManager->isWiFiConnected() && ((currentTime - lastBackupDigiTime) >= 15 * 60 * 1000)) {
+                Serial.println("*** Stopping BackUp Digi Mode ***");
+                backupDigiMode = false;
+                wifiCounter = 0;
+            } else if (networkManager->isWiFiConnected()) {
+                Serial.println("*** WiFi Reconnect Success (Stopping Backup Digi Mode) ***");
+                backupDigiMode = false;
+                wifiCounter = 0;
+            }
+        }
+
+        if (!backupDigiMode && ((currentTime - lastWiFiCheck) >= 30 * 1000) && !networkManager->isWifiAPActive()) {
+            lastWiFiCheck = currentTime;
+            if (networkManager->isWiFiConnected()) {
+                if (Config.digi.backupDigiMode && (currentTime - lastServerCheck > 30 * 1000)) {
+                    Serial.println("*** Server Connection LOST → Backup Digi Mode ***");
+                    backupDigiMode = true;
+                    lastBackupDigiTime = currentTime;
+                }
+            } else {
+                Serial.println("Reconnecting to WiFi...");
+                WIFI_Utils::startWiFi();
+
+                if (Config.digi.backupDigiMode) wifiCounter++;
+                if (wifiCounter >= 2) {
+                    Serial.println("*** Starting BackUp Digi Mode ***");
+                    backupDigiMode = true;
+                    lastBackupDigiTime = currentTime;
+                }
+            }
+        }
+    }
+
+    void startAutoAP() {
+        displayShow("", "   Starting Auto AP", " Please connect to it " , "     loading ...", 1000);
+        networkManager->setupAP(Config.callsign + "-AP", Config.wifiAutoAP.password);
+    }
+
+    void startWiFi() {
+        networkManager->clearWiFiNetworks();
+        for (size_t i = 0; i < Config.wifiAPs.size(); i++) {
+            const WiFi_AP& wifiAP = Config.wifiAPs[i];
+            if (wifiAP.ssid.isEmpty()) continue;
+            networkManager->addWiFiNetwork(wifiAP.ssid, wifiAP.password);
+        }
+
+        if (!networkManager->hasWiFiNetworks()) {
+            Serial.println("WiFi SSID not set!");
+            if (Config.wifiAutoAP.enabled) {
+                Serial.println("Starting AP fallback...");
+                startAutoAP();
+            }
+            return;
+        }
+
+        displayShow("", "Connecting to WiFi:", "", "     loading ...", 0);
+        networkManager->connectWiFi();
+
+        #ifdef INTERNAL_LED_PIN
+            digitalWrite(INTERNAL_LED_PIN, LOW);
+        #endif
+        if (networkManager->isWiFiConnected()) {
+            Serial.print("[WiFi] Connected as ");
+            Serial.print(networkManager->getWiFiIP());
+            Serial.print(" / MAC Address: ");
+            Serial.println(networkManager->getWiFimacAddress());
+            displayShow("", "     Connected!!", "" , "     loading ...", 1000);
+        } else {
+            Serial.println("[WiFi] Not connected to WiFi!");
+            if (Config.wifiAutoAP.enabled) {
+                Serial.println("Starting AP fallback...");
+                displayShow("", " WiFi Not Connected!", "" , "     loading ...", 1000);
+                startAutoAP();
+            } else {
+                displayShow("", " WiFi Not Connected!", "" , "     loading ...", 1000);
+            }
+        }
+    }
+
+    void setup() {
+        if (Config.digi.ecoMode == 0) startWiFi();
+        btStop();
+    }
+
+}
